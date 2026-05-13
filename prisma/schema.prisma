@@ -23,6 +23,12 @@ enum ModuleStatus {
   failed
 }
 
+enum AnnotationStatus {
+  pending
+  applied
+  dismissed
+}
+
 model Course {
   id                   String       @id @default(cuid())
   topic                String
@@ -51,11 +57,27 @@ model Module {
   status       ModuleStatus @default(pending)
   errorMessage String?
   audio        ModuleAudio?
+  annotations  ModuleAnnotation[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
   @@index([courseId, order])
   @@index([status])
+}
+
+model ModuleAnnotation {
+  id            String           @id @default(cuid())
+  moduleId      String
+  module        Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  quotedText    String
+  contextBefore String
+  contextAfter  String
+  note          String
+  status        AnnotationStatus @default(pending)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([moduleId, status])
 }
 
 model ModuleAudio {

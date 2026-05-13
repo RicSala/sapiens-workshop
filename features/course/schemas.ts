@@ -23,3 +23,18 @@ export const SyllabusSchema = z.object({
 
 export type SyllabusModule = z.infer<typeof SyllabusModuleSchema>;
 export type Syllabus = z.infer<typeof SyllabusSchema>;
+
+export const CreateAnnotationSchema = z.object({
+  moduleId: z.string().min(1),
+  quotedText: z.string().trim().min(1).max(2000),
+  contextBefore: z.string().max(500),
+  contextAfter: z.string().max(500),
+  note: z.string().trim().min(1).max(2000),
+});
+
+export const DeleteAnnotationSchema = z.object({
+  annotationId: z.string().min(1),
+});
+
+export type CreateAnnotationInput = z.infer<typeof CreateAnnotationSchema>;
+export type DeleteAnnotationInput = z.infer<typeof DeleteAnnotationSchema>;
