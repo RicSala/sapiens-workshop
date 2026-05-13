@@ -6,6 +6,7 @@
 - NEVER leave the app running. The user will do it.
 - NEVER run prisma migrate / reset commands. Ask the user to do it. Provide command.
 - Several agents are working in parallel. Expect moving ground. Commit only the changes relevant to your current work. If conflict, ask the user.
+- You MUST remember (and push) the user to commit when it fits
 
 ## User commands
 
