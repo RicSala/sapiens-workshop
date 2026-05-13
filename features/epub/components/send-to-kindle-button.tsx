@@ -1,10 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
-import { toast } from "sonner";
 import { Button, type buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { sendCourseToKindle } from "@/features/epub/send-to-kindle";
+import { useSendToKindle } from "@/features/epub/use-send-to-kindle";
 import type { VariantProps } from "class-variance-authority";
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>;
@@ -18,10 +16,8 @@ type Props = {
   disabled?: boolean;
 };
 
-// Self-contained: imports the server action directly and surfaces feedback via
-// the app-wide Sonner toaster (already mounted in app/layout.tsx). The parent
-// component does not need to wire up state, error handling, or env-var checks
-// — a missing KINDLE_EMAIL / EMAIL_FROM / RESEND_API_KEY surfaces as a toast.
+// Text-based Send-to-Kindle button. Self-contained: parent passes courseId and
+// styling props. Feedback surfaces via the app-wide Sonner toaster.
 export function SendToKindleButton({
   courseId,
   label = "Send to Kindle",
@@ -30,30 +26,14 @@ export function SendToKindleButton({
   className,
   disabled,
 }: Props) {
-  const [pending, startTransition] = useTransition();
-
-  function onClick() {
-    startTransition(async () => {
-      const id = toast.loading("Sending to Kindle…");
-      try {
-        const result = await sendCourseToKindle(courseId);
-        if (result.ok) {
-          toast.success("Sent to Kindle", { id });
-        } else {
-          toast.error(result.error, { id });
-        }
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : "Failed to send", { id });
-      }
-    });
-  }
+  const { pending, send } = useSendToKindle(courseId);
 
   return (
     <Button
       size={size}
       variant={variant}
       className={cn(className)}
-      onClick={onClick}
+      onClick={send}
       disabled={disabled || pending}
     >
       {pending ? "Sending…" : label}

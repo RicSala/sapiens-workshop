@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { DownloadEpubButton } from "@/features/epub/components/download-epub-button";
-import { SendToKindleButton } from "@/features/epub/components/send-to-kindle-button";
+import { CourseExportControls } from "@/features/epub/components/course-export-controls";
 
 export const dynamic = "force-dynamic";
 
@@ -68,18 +67,12 @@ export default async function DevEpubPage() {
                     {c._count.modules} modules · {c.status}
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <DownloadEpubButton
-                    courseId={c.id}
-                    label="Download"
-                    disabled={!canExport}
-                  />
-                  <SendToKindleButton
-                    courseId={c.id}
-                    label="Send to Kindle"
-                    disabled={!canExport || !kindleConfigured}
-                  />
-                </div>
+                <CourseExportControls
+                  courseId={c.id}
+                  enableDownload={canExport}
+                  enableSendToKindle={canExport && kindleConfigured}
+                  className="shrink-0"
+                />
               </li>
             );
           })}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CourseDeleteButton } from "@/features/course/components/course-delete-button";
+import { CourseExportControls } from "@/features/epub/components/course-export-controls";
 import {
   ModuleStreamingSection,
   type ModuleSnapshot,
@@ -146,6 +147,10 @@ export function CourseReader({ course, initialModules }: Props) {
             {failedCount > 0 ? ` · ${failedCount} failed` : ""}
           </span>
           <div className="flex items-center gap-2">
+            <CourseExportControls
+              courseId={course.id}
+              enabled={readyCount === initialModules.length && initialModules.length > 0}
+            />
             <CourseDeleteButton courseId={course.id} />
             <Button
               variant="outline"
