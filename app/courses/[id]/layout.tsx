@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CourseTabs } from "@/features/course/components/course-tabs";
+import { ChatWidget } from "@/features/chat/components/chat-widget";
 
 export default async function CourseLayout({
   children,
@@ -16,6 +17,7 @@ export default async function CourseLayout({
       </Link>
       <CourseTabs courseId={id} />
       {children}
+      <ChatWidget courseId={id} />
     </main>
   );
 }
