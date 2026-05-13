@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 import {
   SyllabusOutline,
   type ModuleDraft,
-} from "@/app/courses/new/draft/_components/syllabus-outline";
+} from "@/features/course/components/syllabus-outline";
 import {
   addModule,
   deleteModule,
   moveModule,
   updateModule,
-} from "@/app/actions/modules";
-import { DeleteCourseButton } from "@/app/courses/_components/delete-course-button";
+} from "@/features/course/actions/module";
+import { CourseDeleteButton } from "@/features/course/components/course-delete-button";
 
 type CourseProp = {
   id: string;
@@ -158,7 +158,7 @@ export function SyllabusEditor({ course }: { course: CourseProp }) {
             saved
           </span>
           <div className="flex items-center gap-2">
-            <DeleteCourseButton courseId={course.id} />
+            <CourseDeleteButton courseId={course.id} />
             <Button
               size="sm"
               onClick={onGenerateModules}

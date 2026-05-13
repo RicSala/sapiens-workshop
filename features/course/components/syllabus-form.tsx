@@ -14,8 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SyllabusInputSchema, type SyllabusInput } from "@/lib/schemas";
-import { saveDraftInput } from "@/lib/syllabus-draft-store";
+import { SyllabusInputSchema, type SyllabusInput } from "@/features/course/schemas";
+import { saveDraftInput } from "@/features/course/syllabus-draft-store";
 
 type Template = {
   id: string;

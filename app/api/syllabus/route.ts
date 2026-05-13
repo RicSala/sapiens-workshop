@@ -3,11 +3,11 @@ import { defaultModel } from "@/lib/ai";
 import {
   SyllabusInputSchema,
   SyllabusSchema,
-} from "@/lib/schemas";
+} from "@/features/course/schemas";
 import {
   SYLLABUS_SYSTEM,
   buildSyllabusUserPrompt,
-} from "@/lib/prompts/syllabus";
+} from "@/features/course/prompts/syllabus";
 
 export const maxDuration = 60;
 

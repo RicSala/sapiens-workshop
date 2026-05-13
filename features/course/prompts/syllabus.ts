@@ -1,4 +1,4 @@
-import type { SyllabusInput } from "@/lib/schemas";
+import type { SyllabusInput } from "@/features/course/schemas";
 
 export const SYLLABUS_SYSTEM = `You are a curriculum designer for in-depth, self-paced courses.
 

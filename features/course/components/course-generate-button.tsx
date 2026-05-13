@@ -3,9 +3,9 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { startGeneration } from "@/app/actions/courses";
+import { startGeneration } from "@/features/course/actions/course";
 
-export function StartGenerationButton({ courseId }: { courseId: string }) {
+export function CourseGenerateButton({ courseId }: { courseId: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 

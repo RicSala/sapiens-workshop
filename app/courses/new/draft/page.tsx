@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SyllabusStreamer } from "./_components/syllabus-streamer";
+import { SyllabusStreamer } from "@/features/course/components/syllabus-streamer";
 
 export default function DraftPage() {
   return (

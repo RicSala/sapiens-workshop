@@ -13,9 +13,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteCourse } from "@/app/actions/courses";
+import { deleteCourse } from "@/features/course/actions/course";
 
-export function DeleteCourseButton({ courseId }: { courseId: string }) {
+export function CourseDeleteButton({ courseId }: { courseId: string }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 

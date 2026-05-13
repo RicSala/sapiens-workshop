@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { StartGenerationButton } from "@/app/courses/_components/start-generation-button";
-import { CourseReader } from "./_components/course-reader";
+import { CourseGenerateButton } from "@/features/course/components/course-generate-button";
+import { CourseReader } from "@/features/course/components/course-reader";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +52,7 @@ export default async function CoursePage({
                 Open syllabus →
               </Link>
             </Button>
-            {hasSyllabus && <StartGenerationButton courseId={course.id} />}
+            {hasSyllabus && <CourseGenerateButton courseId={course.id} />}
           </div>
         </div>
       </div>

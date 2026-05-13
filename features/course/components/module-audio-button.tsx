@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   synthesizeModuleAudio,
   type AudioResult,
-} from "@/app/actions/synthesize-audio";
+} from "@/features/course/actions/module-audio";
 
 type Props = {
   moduleId: string;

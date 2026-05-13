@@ -11,10 +11,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SyllabusSchema, type SyllabusInput } from "@/lib/schemas";
-import { readDraftInput, clearDraftInput } from "@/lib/syllabus-draft-store";
+import { SyllabusSchema, type SyllabusInput } from "@/features/course/schemas";
+import { readDraftInput, clearDraftInput } from "@/features/course/syllabus-draft-store";
 import { SyllabusOutline, type ModuleDraft } from "./syllabus-outline";
-import { saveCourseFromDraft } from "@/app/actions/courses";
+import { saveCourseFromDraft } from "@/features/course/actions/course";
 
 type DraftState =
   | { kind: "loading" }

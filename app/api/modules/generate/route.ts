@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import {
   MODULE_SYSTEM,
   buildModuleUserPromptParts,
-} from "@/lib/prompts/module";
+} from "@/features/course/prompts/module";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;

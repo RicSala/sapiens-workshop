@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { SyllabusEditor } from "./_components/syllabus-editor";
+import { SyllabusEditor } from "@/features/course/components/syllabus-editor";
 
 export const dynamic = "force-dynamic";
 

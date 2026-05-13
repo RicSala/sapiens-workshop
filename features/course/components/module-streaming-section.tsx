@@ -25,7 +25,7 @@ type Props = {
   onFailure: () => void;
 };
 
-export function StreamingModuleSection({
+export function ModuleStreamingSection({
   index,
   module: m,
   isActive,

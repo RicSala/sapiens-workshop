@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SyllabusForm } from "./_components/syllabus-form";
+import { SyllabusForm } from "@/features/course/components/syllabus-form";
 
 export default function NewCoursePage() {
   return (

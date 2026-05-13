@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { delBlob } from "@/lib/blob";
-import { SyllabusInputSchema } from "@/lib/schemas";
+import { delBlob } from "@/features/course/blob";
+import { SyllabusInputSchema } from "@/features/course/schemas";
 
 const SaveDraftSchema = z.object({
   input: SyllabusInputSchema,

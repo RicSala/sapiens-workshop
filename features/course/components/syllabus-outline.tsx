@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { SyllabusInput } from "@/lib/schemas";
+import type { SyllabusInput } from "@/features/course/schemas";
 
 export type ModuleDraft = {
   id: string;

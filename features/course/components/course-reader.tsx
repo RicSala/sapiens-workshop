@@ -4,11 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { DeleteCourseButton } from "@/app/courses/_components/delete-course-button";
+import { CourseDeleteButton } from "@/features/course/components/course-delete-button";
 import {
-  StreamingModuleSection,
+  ModuleStreamingSection,
   type ModuleSnapshot,
-} from "./streaming-module-section";
+} from "./module-streaming-section";
 
 type Props = {
   course: {
@@ -23,7 +23,7 @@ type Props = {
   initialModules: ModuleSnapshot[];
 };
 
-// Each module owns its own useCompletion() instance via StreamingModuleSection.
+// Each module owns its own useCompletion() instance via ModuleStreamingSection.
 // This component's only job is queue coordination: exactly one child has
 // isActive=true at any moment, and `activeIndex` advances when a child reports
 // success or failure.
@@ -128,7 +128,7 @@ export function CourseReader({ course, initialModules }: Props) {
 
       <div className="flex flex-col gap-12">
         {initialModules.map((m, i) => (
-          <StreamingModuleSection
+          <ModuleStreamingSection
             key={m.id}
             index={i + 1}
             module={m}
@@ -146,7 +146,7 @@ export function CourseReader({ course, initialModules }: Props) {
             {failedCount > 0 ? ` · ${failedCount} failed` : ""}
           </span>
           <div className="flex items-center gap-2">
-            <DeleteCourseButton courseId={course.id} />
+            <CourseDeleteButton courseId={course.id} />
             <Button
               variant="outline"
               size="sm"

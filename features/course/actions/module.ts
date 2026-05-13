@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { delBlob } from "@/lib/blob";
+import { delBlob } from "@/features/course/blob";
 
 const AddSchema = z.object({
   courseId: z.string().min(1),

@@ -1,6 +1,6 @@
 "use client";
 
-import type { SyllabusInput } from "@/lib/schemas";
+import type { SyllabusInput } from "@/features/course/schemas";
 
 const KEY = "syllabus-draft-input";
 

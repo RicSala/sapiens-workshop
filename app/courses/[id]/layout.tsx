@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CourseTabs } from "./_components/course-tabs";
+import { CourseTabs } from "@/features/course/components/course-tabs";
 
 export default async function CourseLayout({
   children,

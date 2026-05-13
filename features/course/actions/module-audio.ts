@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { synthesize } from "@/lib/tts";
-import { putAudio, delBlob } from "@/lib/blob";
+import { synthesize } from "@/features/course/tts";
+import { putAudio, delBlob } from "@/features/course/blob";
 
 const Input = z.object({
   moduleId: z.string().min(1),
