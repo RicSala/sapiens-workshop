@@ -14,6 +14,7 @@ import {
   moveModule,
   updateModule,
 } from "@/features/course/actions/module";
+import { startGeneration } from "@/features/course/actions/course";
 import { CourseDeleteButton } from "@/features/course/components/course-delete-button";
 
 type CourseProp = {
@@ -126,9 +127,10 @@ export function SyllabusEditor({ course }: { course: CourseProp }) {
       toast.warning("Every module needs a title and summary before generating.");
       return;
     }
-    // The reader auto-starts streaming any non-ready modules on mount, so we
-    // just navigate. No server-side coordinator action needed.
-    router.push(`/courses/${course.id}`);
+    startTransition(async () => {
+      await startGeneration(course.id);
+      router.push(`/courses/${course.id}`);
+    });
   }
 
   return (
