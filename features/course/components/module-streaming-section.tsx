@@ -4,8 +4,12 @@ import { useCompletion } from "@ai-sdk/react";
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Markdown } from "@/lib/markdown";
-import { cn } from "@/lib/utils";
 import { ModuleAudioButton } from "./module-audio-button";
+import {
+  ModuleAnnotationLayer,
+  type Annotation,
+} from "./module-annotation-layer";
+import { BlinkingCursor, Spinner, StatusPill } from "./_atoms";
 
 export type ModuleSnapshot = {
   id: string;
@@ -15,6 +19,7 @@ export type ModuleSnapshot = {
   content: string | null;
   errorMessage: string | null;
   audio: { url: string; mime: string } | null;
+  annotations: Annotation[];
 };
 
 type Props = {
@@ -91,7 +96,16 @@ export function ModuleStreamingSection({
           {persisted && (
             <ModuleAudioButton moduleId={m.id} initialAudio={m.audio} />
           )}
-          <Markdown>{showText}</Markdown>
+          {persisted && !streaming ? (
+            <ModuleAnnotationLayer
+              moduleId={m.id}
+              annotations={m.annotations}
+            >
+              <Markdown>{showText}</Markdown>
+            </ModuleAnnotationLayer>
+          ) : (
+            <Markdown>{showText}</Markdown>
+          )}
           {streaming && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BlinkingCursor />
@@ -125,57 +139,3 @@ export function ModuleStreamingSection({
   );
 }
 
-function StatusPill({ status }: { status: string }) {
-  const config: Record<string, { label: string; cls: string; dot?: string }> = {
-    pending: {
-      label: "Pending",
-      cls: "text-muted-foreground bg-muted",
-      dot: "bg-muted-foreground/50",
-    },
-    generating: {
-      label: "Writing",
-      cls: "text-amber-700 dark:text-amber-300 bg-amber-500/10",
-      dot: "bg-amber-500 animate-pulse",
-    },
-    ready: {
-      label: "Ready",
-      cls: "text-emerald-700 dark:text-emerald-300 bg-emerald-500/10",
-      dot: "bg-emerald-500",
-    },
-    failed: {
-      label: "Failed",
-      cls: "text-destructive bg-destructive/10",
-      dot: "bg-destructive",
-    },
-  };
-  const c = config[status] ?? {
-    label: status,
-    cls: "text-muted-foreground bg-muted",
-  };
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium",
-        c.cls,
-      )}
-    >
-      {c.dot && <span className={cn("size-1.5 rounded-full", c.dot)} />}
-      {c.label}
-    </span>
-  );
-}
-
-function Spinner() {
-  return (
-    <span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-  );
-}
-
-function BlinkingCursor() {
-  return (
-    <span
-      aria-hidden
-      className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-amber-500/80 align-middle"
-    />
-  );
-}

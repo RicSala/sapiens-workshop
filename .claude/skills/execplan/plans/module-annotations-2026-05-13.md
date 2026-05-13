@@ -20,12 +20,14 @@ Use one checkbox per concrete step. When you start a step, append `(started <YYY
   - [x] `features/course/schemas.ts` — zod schemas for create/delete annotation (done 2026-05-13 17:38)
   - [x] `features/course/actions/annotation.ts` — `createAnnotation`, `deleteAnnotation`, `listModuleAnnotations` (done 2026-05-13 17:42)
   - [x] Unit-style sanity check via the Prisma client (one create, one list, one delete) inside `npx tsx` (done 2026-05-13 17:44 — output: `created <cuid>`, `found 1 annotations`, `deleted`. tsc + eslint clean.)
-- [ ] Milestone 2 — Selection + popover UI + highlight rendering
-  - [ ] Install `mark.js` for DOM-based highlight painting (or confirm a remark/rehype plugin alternative; see Decision Log entry #5)
-  - [ ] `features/course/components/module-annotation-layer.tsx` — wraps the rendered module markdown; captures text selection; opens a popover; paints existing highlights via mark.js
-  - [ ] `features/course/components/module-annotation-popover.tsx` — note input + save/cancel; calls `createAnnotation` server action
-  - [ ] Wire the layer into `module-streaming-section.tsx` so it activates only when the module is `ready` (selection should not be capturable mid-stream)
-  - [ ] On load: page fetches `listModuleAnnotations(moduleId)` server-side and passes the array down so highlights paint immediately on render
+- [x] Milestone 2 — Selection + popover UI + highlight rendering (done 2026-05-13 18:05; pending user smoke-test in browser)
+  - [x] Install `mark.js` + `@types/mark.js` (done 2026-05-13 17:50)
+  - [x] `features/course/components/module-annotation-layer.tsx` — wraps rendered markdown; captures selection on mouseup; paints existing highlights via mark.js with `acrossElements: true`; re-paints in `useLayoutEffect` (done 2026-05-13 17:58)
+  - [x] `features/course/components/module-annotation-popover.tsx` — note textarea + Save/Cancel; calls `createAnnotation` via `useTransition`; positioned `fixed` at selection's `bottom + 6px / left` (done 2026-05-13 17:58)
+  - [x] `.sw-annotation` style added to `app/globals.css` (light + dark) (done 2026-05-13 18:00)
+  - [x] Wire the layer into `module-streaming-section.tsx`; only mounts when `persisted && !streaming` (done 2026-05-13 18:02)
+  - [x] `app/courses/[id]/page.tsx` includes `annotations` (pending, asc) in the Prisma query and passes `{id, quotedText, note}` down through `CourseReader` → `ModuleStreamingSection` (done 2026-05-13 18:04)
+  - [x] tsc + eslint + build all clean (done 2026-05-13 18:05)
 - [ ] Milestone 3 — Regenerate endpoint + prompt
   - [ ] `features/course/prompts/module-regenerate.ts` — `MODULE_REGEN_SYSTEM`, `buildModuleRegenPrompt({ course, syllabus, priorModules, originalContent, annotations })` returning `[stablePrefix, variableSuffix]` for Anthropic prompt caching
   - [ ] `app/api/modules/regenerate/route.ts` — POST handler: load module + course + prior `ready` modules + pending annotations; mark module `generating`; stream via `streamText(...).toTextStreamResponse()`; on finish, persist new content + relocate annotations (flip non-matchers to `applied`) + mark module `ready`; on error, mark `failed`

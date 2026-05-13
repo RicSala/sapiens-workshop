@@ -18,7 +18,14 @@ export default async function CoursePage({
     include: {
       modules: {
         orderBy: { order: "asc" },
-        include: { audio: true },
+        include: {
+          audio: true,
+          annotations: {
+            where: { status: "pending" },
+            orderBy: { createdAt: "asc" },
+            select: { id: true, quotedText: true, note: true },
+          },
+        },
       },
     },
   });
@@ -80,6 +87,7 @@ export default async function CoursePage({
         audio: m.audio
           ? { url: m.audio.blobUrl, mime: m.audio.mime }
           : null,
+        annotations: m.annotations,
       }))}
     />
   );

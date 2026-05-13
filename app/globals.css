@@ -130,3 +130,17 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  mark.sw-annotation {
+    background-color: oklch(0.92 0.13 95);
+    color: inherit;
+    padding: 0 1px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .dark mark.sw-annotation {
+    background-color: oklch(0.55 0.13 85 / 0.45);
+    color: inherit;
+  }
+}
