@@ -28,13 +28,16 @@ Use one checkbox per concrete step. When you start a step, append `(started <YYY
   - [x] Wire the layer into `module-streaming-section.tsx`; only mounts when `persisted && !streaming` (done 2026-05-13 18:02)
   - [x] `app/courses/[id]/page.tsx` includes `annotations` (pending, asc) in the Prisma query and passes `{id, quotedText, note}` down through `CourseReader` → `ModuleStreamingSection` (done 2026-05-13 18:04)
   - [x] tsc + eslint + build all clean (done 2026-05-13 18:05)
-- [ ] Milestone 3 — Regenerate endpoint + prompt
-  - [ ] `features/course/prompts/module-regenerate.ts` — `MODULE_REGEN_SYSTEM`, `buildModuleRegenPrompt({ course, syllabus, priorModules, originalContent, annotations })` returning `[stablePrefix, variableSuffix]` for Anthropic prompt caching
-  - [ ] `app/api/modules/regenerate/route.ts` — POST handler: load module + course + prior `ready` modules + pending annotations; mark module `generating`; stream via `streamText(...).toTextStreamResponse()`; on finish, persist new content + relocate annotations (flip non-matchers to `applied`) + mark module `ready`; on error, mark `failed`
-- [ ] Milestone 4 — Regenerate trigger + client integration
-  - [ ] `features/course/components/module-regenerate-button.tsx` — visible only when at least one pending annotation exists for the module; shows count
-  - [ ] Hook into `module-streaming-section.tsx`: the existing `useCompletion()` already streams text from a configurable endpoint; for regen we point a *second* `useCompletion()` at `/api/modules/regenerate` (or switch endpoints via state — see Decision Log)
-  - [ ] After stream finishes, `router.refresh()` so the new annotation list (with the applied ones dropped from the active set) re-renders
+- [x] Milestone 3 — Regenerate endpoint + prompt (done 2026-05-13 18:25)
+  - [x] `features/course/prompts/module-regenerate.ts` — `MODULE_REGEN_SYSTEM` + `buildModuleRegenPromptParts` returning `[stable, variable]` (done 2026-05-13 18:18)
+  - [x] `features/course/lib/relocate-annotations.ts` — pure `relocateAnnotations(newContent, annotations)` returning `{stillPresentIds, appliedIds}` via exact substring (done 2026-05-13 18:20)
+  - [x] `app/api/modules/regenerate/route.ts` — POST handler. Skips `Course.status` updates (single-module edit). 409 if module not ready; 400 if no pending annotations. On finish, txn-updates module + flips applied annotations. On error, sets module `failed` (done 2026-05-13 18:24)
+  - [x] tsc + eslint clean (done 2026-05-13 18:25)
+- [x] Milestone 4 — Regenerate trigger + client integration (done 2026-05-13 18:35)
+  - [x] `features/course/components/module-regenerate-button.tsx` — props `{pendingCount, disabled, isRegenerating, onClick}`; renders nothing when count is 0 (done 2026-05-13 18:30)
+  - [x] Second `useCompletion({api: '/api/modules/regenerate'})` in `module-streaming-section.tsx`; while it's loading, the displayed text is the regen `completion` (overrides `m.content`). Layer is gated off during streaming (already covered by the `!streaming` check) (done 2026-05-13 18:34)
+  - [x] `router.refresh()` in regen `onFinish` so the new annotation list re-fetches and applied ones drop (done 2026-05-13 18:34)
+  - [x] tsc + eslint + build clean (done 2026-05-13 18:35)
 - [ ] Milestone 5 — Annotation management polish
   - [ ] Click a highlight: shows the note in a small overlay with a Delete button
   - [ ] Tracker entry as Slice 7 in `docs/tracker.md`

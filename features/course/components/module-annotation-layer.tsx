@@ -33,6 +33,7 @@ type Props = {
   moduleId: string;
   annotations: Annotation[];
   children: React.ReactNode;
+  disabled?: boolean;
 };
 
 const CONTEXT_CHARS = 100;
@@ -46,6 +47,7 @@ export function ModuleAnnotationLayer({
   moduleId,
   annotations,
   children,
+  disabled,
 }: Props) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -78,10 +80,11 @@ export function ModuleAnnotationLayer({
 
   useLayoutEffect(() => {
     repaint();
-  }, [repaint, children]);
+  }, [repaint]);
 
   // Selection-to-create + click-mark-to-view
   useEffect(() => {
+    if (disabled) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -154,7 +157,7 @@ export function ModuleAnnotationLayer({
       document.removeEventListener("mouseup", onMouseUp);
       container.removeEventListener("click", onClick);
     };
-  }, [annotations]);
+  }, [annotations, disabled]);
 
   // ESC closes
   useEffect(() => {

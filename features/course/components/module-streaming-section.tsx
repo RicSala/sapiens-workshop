@@ -2,6 +2,7 @@
 
 import { useCompletion } from "@ai-sdk/react";
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Markdown } from "@/lib/markdown";
 import { ModuleAudioButton } from "./module-audio-button";
@@ -9,6 +10,7 @@ import {
   ModuleAnnotationLayer,
   type Annotation,
 } from "./module-annotation-layer";
+import { ModuleRegenerateButton } from "./module-regenerate-button";
 import { BlinkingCursor, Spinner, StatusPill } from "./_atoms";
 
 export type ModuleSnapshot = {
@@ -37,6 +39,7 @@ export function ModuleStreamingSection({
   onSuccess,
   onFailure,
 }: Props) {
+  const router = useRouter();
   const persisted = m.status === "ready" && !!m.content;
 
   const { completion, complete, isLoading, error, stop } = useCompletion({
@@ -45,6 +48,13 @@ export function ModuleStreamingSection({
     body: { moduleId: m.id },
     onFinish: () => onSuccess(),
     onError: () => onFailure(),
+  });
+
+  const regen = useCompletion({
+    api: "/api/modules/regenerate",
+    streamProtocol: "text",
+    body: { moduleId: m.id },
+    onFinish: () => router.refresh(),
   });
 
   const triggeredRef = useRef(false);
@@ -59,21 +69,44 @@ export function ModuleStreamingSection({
     });
   }, [isActive, persisted, complete]);
 
-  // Cancel any in-flight stream if the component unmounts.
+  // Cancel any in-flight stream if the component unmounts. Depend on the
+  // (stable) stop callback, NOT the whole `regen` object — `regen` has a fresh
+  // identity every render, which would re-fire this cleanup and abort the
+  // in-flight stream on every state update.
   useEffect(() => () => stop(), [stop]);
+  const regenStop = regen.stop;
+  useEffect(() => () => regenStop(), [regenStop]);
 
   function onRetry() {
     triggeredRef.current = true;
     void complete("").catch(() => {});
   }
 
+  const regenInFlightRef = useRef(false);
+  function onRegenerate() {
+    if (regenInFlightRef.current || regen.isLoading) return;
+    regenInFlightRef.current = true;
+    void regen
+      .complete("")
+      .catch(() => {})
+      .finally(() => {
+        regenInFlightRef.current = false;
+      });
+  }
+
+  const regenStreaming = regen.isLoading;
   const liveText = completion || null;
-  const showText = persisted ? m.content : liveText;
-  const streaming = isLoading && !!liveText;
-  const hasError = !!error && !isLoading;
+  // Prefer in-flight or just-finished regen text over persisted content so
+  // the stream displays as it arrives. After regen finishes, router.refresh()
+  // updates m.content; until then, regen.completion keeps the new text visible.
+  const showText = regen.completion || (persisted ? m.content : liveText);
+  const streaming = (isLoading && !!liveText) || (regenStreaming && !!regen.completion);
+  const hasError = (!!error && !isLoading) || (!!regen.error && !regenStreaming);
 
   const status = persisted
-    ? "ready"
+    ? regenStreaming
+      ? "generating"
+      : "ready"
     : isLoading
       ? "generating"
       : hasError
@@ -94,12 +127,20 @@ export function ModuleStreamingSection({
       {showText ? (
         <div className="flex flex-col gap-3">
           {persisted && (
-            <ModuleAudioButton moduleId={m.id} initialAudio={m.audio} />
+            <div className="flex items-center gap-2">
+              <ModuleAudioButton moduleId={m.id} initialAudio={m.audio} />
+              <ModuleRegenerateButton
+                pendingCount={m.annotations.length}
+                isRegenerating={regenStreaming}
+                onClick={onRegenerate}
+              />
+            </div>
           )}
-          {persisted && !streaming ? (
+          {persisted ? (
             <ModuleAnnotationLayer
               moduleId={m.id}
-              annotations={m.annotations}
+              annotations={streaming ? [] : m.annotations}
+              disabled={streaming}
             >
               <Markdown>{showText}</Markdown>
             </ModuleAnnotationLayer>
@@ -109,8 +150,13 @@ export function ModuleStreamingSection({
           {streaming && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BlinkingCursor />
-              <span>Writing…</span>
+              <span>{regenStreaming ? "Regenerating…" : "Writing…"}</span>
             </div>
+          )}
+          {regen.error && !regenStreaming && (
+            <p className="text-sm text-destructive">
+              Regen failed: {regen.error.message}
+            </p>
           )}
         </div>
       ) : (
