@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum CourseStatus {
+  draft
+  syllabus_ready
+  generating
+  ready
+  failed
+}
+
+enum ModuleStatus {
+  pending
+  generating
+  ready
+  failed
+}
+
+model Course {
+  id                   String       @id @default(cuid())
+  topic                String
+  audience             String
+  tone                 String?
+  language             String       @default("English")
+  targetModuleCount    Int
+  targetWordsPerModule Int
+  title                String?
+  status               CourseStatus @default(syllabus_ready)
+  modules              Module[]
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  @@index([createdAt])
+}
+
+model Module {
+  id           String       @id @default(cuid())
+  courseId     String
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order        Int
+  title        String
+  summary      String
+  content      String?
+  status       ModuleStatus @default(pending)
+  errorMessage String?
+  audio        ModuleAudio?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([courseId, order])
+  @@index([status])
+}
+
+model ModuleAudio {
+  id           String   @id @default(cuid())
+  moduleId     String   @unique
+  module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  blobUrl      String
+  blobPathname String
+  mime         String   @default("audio/mpeg")
+  durationMs   Int?
+  createdAt    DateTime @default(now())
+}
